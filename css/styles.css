@@ -1,0 +1,22 @@
+#tShoots, #tShips {
+    display: inline;
+    margin-right: 30px;
+}
+
+th, td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+}
+
+#tShoots td {
+    cursor: pointer;
+}
+
+tr:nth-child(2n) td:nth-child(2n+1)  {
+    background-color: #000;
+}
+
+tr:nth-child(2n+1) td:nth-child(2n)  {
+    background-color: #000;
+}
