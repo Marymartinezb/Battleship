@@ -20,3 +20,9 @@ tr:nth-child(2n) td:nth-child(2n+1)  {
 tr:nth-child(2n+1) td:nth-child(2n)  {
     background-color: #000;
 }
+
+#shipsContainer {
+    display: inline-block;
+    vertical-align: top;
+    width: 200px;
+}
