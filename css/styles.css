@@ -1,5 +1,5 @@
-#tShoots, #tShips {
-    display: inline;
+.tShoots, .tShips {
+    display: inline-block;
     margin-right: 30px;
 }
 
@@ -9,20 +9,29 @@ th, td {
     border: 1px solid black;
 }
 
-#tShoots td {
+.tShoots td {
     cursor: pointer;
 }
 
-tr:nth-child(2n) td:nth-child(2n+1)  {
-    background-color: #000;
-}
-
-tr:nth-child(2n+1) td:nth-child(2n)  {
-    background-color: #000;
-}
-
-#shipsContainer {
+.shipsContainer {
     display: inline-block;
     vertical-align: top;
     width: 200px;
+}
+
+.btnStart {
+    background-color: #F8A51C;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    padding: .7rem 1.5rem;
+    text-decoration: none;
+}
+
+.btnStart:hover {
+background-color: #21a295; }
+
+.hidden {
+    display: none;
 }
