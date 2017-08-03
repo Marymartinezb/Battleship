@@ -1,5 +1,7 @@
 // View
 var battleship_view = (function () {
+    var droppable = false;
+   this.ships;
 
     /**
      * @function renderShip
@@ -8,19 +10,22 @@ var battleship_view = (function () {
     function renderShip(ships) {
         ships.forEach(function (element) {
             var ship = document.createElement('div');
+            ship.ships = ships;
             ship.style.backgroundColor = 'gray';
             ship.style.width = element.space * 30 + 'px';
             ship.style.height = 30 + 'px';
             ship.style.border = '1px solid #fff';
             var shipsContainer = document.getElementById('shipsContainer');
             shipsContainer.appendChild(ship);
+            ship.setAttribute("id", element.name);
+            ship.addEventListener('click', drag);
         });
     }
 
     /**
      * @function gridSingleton
      */
-    var gridSingleton = (function () {
+    var renderGrid = (function () {
 
         // Instance stores a reference to the Singleton
         var instance;
@@ -73,6 +78,19 @@ var battleship_view = (function () {
                     td.id = headers[i] + counter;
                     tr.appendChild(td);
                     counter++;
+                    td.addEventListener('mouseover', function () {
+                        if (droppable) {
+                            mouseover(event, myShip)
+                        }
+                    });
+                    td.addEventListener('mouseout', function () {
+                        if (droppable) {
+                            mouseout(event, myShip)
+                        }
+                    });
+                    td.addEventListener('click', function() {
+                        droppable = false;
+                    });
                 };
                 tbody.appendChild(tr);
                 target.appendChild(tbody);
@@ -97,6 +115,64 @@ var battleship_view = (function () {
         alert('Por favor posicione sus barcos')
     }
 
+    var ship = {};
+
+    function drag(event) {
+        var element = event.target.id;
+        if (element == "aircraftcarrier") {
+            ship = this.ships[0];
+                    console.log(ship.space);
+        } else if (element == "battleship"){
+            ship = this.ships[1];
+        } else if (element == "frigate"){
+            ship = this.ships[2];
+        } else if (element == "submarine"){
+            ship = this.ships[3];
+        } else if (element == "minesweeper"){
+            ship = this.ships[4];
+        }
+        console.log('drag')
+        droppable = true;
+    }
+
+    function mouseover(event, ship) {
+        // debe chekear si esta rotado porque la forma de conseguir el elemento es diferente,
+        // si lo consigue horizontalmente solo deberia de moverse un td a la derecha,
+        // si lo consigue verticalmente debe moverse un tr abajo
+        var target = event.target;
+        var element = document.getElementById(target.id);
+        var elements = [element];
+        for (var i = 0; ship.space - 1 > i; i++) {
+            var adyElement = document.getElementById(parseInt(target.id) + 1); // Pensar mejor
+            console.log(adyElement);
+            elements.push(adyElement);
+        }
+        elements.forEach(function (node) {
+            node.style.backgroundColor = '#000'; // Sirve pero que funcione mas como un over
+        });
+        // elements, a cada nodo le pinto un background
+        console.log('Elements', elements);
+        console.log('Ship', ship);
+    }
+
+    function mouseout(event, ship) {
+        // debe chekear si esta rotado porque la forma de conseguir el elemento es diferente,
+        // si lo consigue horizontalmente solo deberia de moverse un td a la derecha,
+        // si lo consigue verticalmente debe moverse un tr abajo
+        var target = event.target;
+        var element = document.getElementById(target.id);
+        var elements = [element];
+        for (var i = 0; ship.space - 1 > i; i++) {
+            var adyElement = document.getElementById(parseInt(target.id) + 1); // Pensar mejor
+            console.log(adyElement);
+            elements.push(adyElement);
+        }
+        elements.forEach(function (node) {
+            node.style.backgroundColor = 'blue'; // Sirve pero que funcione mas como un over
+        });
+    }
+ 
+
     /**
      * @function showEnemyGrid
      */
@@ -108,8 +184,9 @@ var battleship_view = (function () {
     // Drag and drop
     return {
         renderShip: renderShip,
-        renderGrid: gridSingleton,
+        renderGrid: renderGrid,
         startMsg: startMsg,
         showEnemyGrid: showEnemyGrid,
+        drag: drag
     }
 }());

@@ -2,42 +2,47 @@
 
 function Factory(){
     this.createShips = function(type) {
-        var ships;
+        var ship;
 
         if (type === "aircraftcarrier") {
-            ships = new aircraftcarrier();
+            ship = new aircraftcarrier();
         } else if (type === "battleship"){
-            ships = new battleship();
+            ship = new battleship();
         } else if (type === "frigate"){
-            ships = new frigate();
+            ship = new frigate();
         } else if (type === "submarine"){
-            ships = new submarine();
+            ship = new submarine();
         } else if (type === "minesweeper"){
-            ships = new minesweeper();
+            ship = new minesweeper();
         }
 
-        ships.type = type;
+        ship.type = type;
 
-        return ships;
+        return ship;
     }
 };
 
 var aircraftcarrier = function(){
     this.space = 5;
+    this.name = "aircraftcarrier";
 };
 
 var battleship = function(){
     this.space = 4;
+    this.name = "battleship";
 };
 
 var frigate = function(){
     this.space = 3;
+    this.name = "frigate";
 };
 
 var submarine = function(){
     this.space = 3;
+    this.name = "submarine";
 };
 
 var minesweeper = function(){
     this.space = 2;
+    this.name = "minesweeper";
 };
