@@ -16,8 +16,6 @@ function Factory(){
             ship = new minesweeper();
         }
 
-        ship.type = type;
-
         return ship;
     }
 };

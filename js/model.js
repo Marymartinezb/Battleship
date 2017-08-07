@@ -1,5 +1,7 @@
 // Model
 var battleship_model = (function() {
+    var userShips = [];
+
     function createShips() {
         var ships = [];
         var factory = new Factory();
@@ -11,9 +13,15 @@ var battleship_model = (function() {
         return ships;
     }
     
+    function insertShip(ship) {
+        userShips.push(ship);
+        console.log('Ships in model', userShips);      
+    }
+    
     // Datos concisos o cualquier otra cosa que necesite
     return {
         create: createShips,
+        insertShip: insertShip
     }
 
 }());
