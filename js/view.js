@@ -144,12 +144,21 @@ var battleship_view = (function () {
         // ToDo: Chekear rotacion
         // No funcione sobre uno ya posicionado
         // tratar de hacerlo reutilizable
+        // que no se salga del grid
         var target = event.target;  
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
         var elLetter = targetId.slice(0,1);         
         var elNumber = parseInt(targetId.slice(1,3));         
         for (var i = 1; currentShip.space > i; i++) {
+            if(elNumber+i > 10) {
+                // Este if valida que no se haya pasado de 10, el maximo del juego
+                // Si fuese el caso de que lo hizo, borra del objeto de barcos las posiciones dadas
+                dataShip = {
+                    'pos': []
+                };
+                return; //Detiene la funcion
+            }
             var nextElement = document.getElementById('tShips'+elLetter+(elNumber+i));
             elements.push(nextElement);
         }
@@ -172,6 +181,7 @@ var battleship_view = (function () {
         var elLetter = targetId.slice(0,1);         
         var elNumber = parseInt(targetId.slice(1,3));         
         for (var i = 1; currentShip.space > i; i++) {
+            if(elNumber+i > 10) {return;};
             var nextElement = document.getElementById('tShips'+elLetter+(elNumber+i));
             elements.push(nextElement);
         }
@@ -198,6 +208,14 @@ var battleship_view = (function () {
         } else {
             enableSetShip = false;
             var pos = dataShip['pos'];
+            if(pos.length == 0) {
+                // Si el objeto de barcos de posiciones fue borrado
+                // pos.length seria igual a 0, por ende no deberia dejar 
+                // insertar ningun barco ademas deberia de avisa de cierta 
+                // for que lo que hace no es valido
+                alert('Hey');
+                return;
+            }
             dataShip = {
                 'name': [],
                 'pos': []
