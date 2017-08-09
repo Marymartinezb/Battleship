@@ -1,4 +1,4 @@
-// View
+// View Module pattern
 var battleship_view = (function () {
     var currentShip = {};
     var table = {};
@@ -148,7 +148,7 @@ var battleship_view = (function () {
         var target = event.target;  
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
-        var elLetter = targetId.slice(0,1);         
+        var elLetter = targetId.slice(0,1);
         var elNumber = parseInt(targetId.slice(1,3));         
         for (var i = 1; currentShip.space > i; i++) {
             if(elNumber+i > 10) {
@@ -212,7 +212,7 @@ var battleship_view = (function () {
                 // Si el objeto de barcos de posiciones fue borrado
                 // pos.length seria igual a 0, por ende no deberia dejar 
                 // insertar ningun barco ademas deberia de avisa de cierta 
-                // for que lo que hace no es valido
+                // por que lo que hace no es valido
                 alert('Hey');
                 return;
             }
@@ -225,7 +225,8 @@ var battleship_view = (function () {
             return dataShip;
         };
         
-    }
+    } // cambiar a model
+
 
     /**
      * @function getTable

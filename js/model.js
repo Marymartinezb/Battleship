@@ -1,4 +1,4 @@
-// Model
+// Model Module pattern
 var battleship_model = (function() {
     var userShips = [];
 
@@ -15,7 +15,7 @@ var battleship_model = (function() {
     
     function insertShip(ship) {
         userShips.push(ship);
-        console.log('Ships in model', userShips);      
+        console.log('Ships in model', userShips);
     }
     
     // Datos concisos o cualquier otra cosa que necesite
