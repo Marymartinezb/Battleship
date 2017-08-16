@@ -15,13 +15,18 @@ var battleship_model = (function() {
     
     function insertShip(ship) {
         userShips.push(ship);
+
         console.log('Ships in model', userShips);
     }
     
+   
     // Datos concisos o cualquier otra cosa que necesite
     return {
         create: createShips,
-        insertShip: insertShip
+        insertShip: insertShip,
+        returnShip: function() {
+            return userShips;
+        }
     }
 
 }());

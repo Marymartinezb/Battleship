@@ -1,10 +1,18 @@
 // View Module pattern
 var battleship_view = (function () {
-    var currentShip = {};
-    var table = {};
+    var currentShip = {}; //Barco actualmente seleccionado
+    var table = {}; //Toda la tabla
     var enableSetShip = false;
     this.ships; // Constructor
     var dataShip = {};
+    var dataUserShips = [];
+    var valid = true;
+    var headers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    var dataComputerShips = [];
+    var fullEnemShips = []; //Array de barcos del enemigo
+    var usedId = []; //Ids usados por la maquina
+    var userShoootsCounter = 0;
+
 
     /**
      * @function renderShip
@@ -12,12 +20,9 @@ var battleship_view = (function () {
      */
     function renderShip(ships) {
         ships.forEach(function (element) {
-            var ship = document.createElement('div');
+            var ship = document.createElement('img');
             ship.ships = ships;
-            ship.style.backgroundColor = 'gray';
-            ship.style.width = element.space * 30 + 'px';
-            ship.style.height = 30 + 'px';
-            ship.style.border = '1px solid #fff';
+            ship.setAttribute('src', 'img/' + element.name + '.png');
             var shipsContainer = document.getElementById('shipsContainer');
             shipsContainer.appendChild(ship);
             ship.setAttribute("id", element.name);
@@ -34,7 +39,6 @@ var battleship_view = (function () {
         var instance;
         var tShips = document.getElementById('tShips');
         var tShoots = document.getElementById('tShoots');
-        var headers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 
         function init() {
             _composeHead(tShips);
@@ -43,10 +47,6 @@ var battleship_view = (function () {
             _composeHead(tShoots);
             _composeBody(tShoots);
 
-            // Eliminar
-            tShoots.addEventListener('click', function (e) {
-                console.log(e.target.id);
-            })
         };
 
         function _composeHead(target) {
@@ -126,6 +126,12 @@ var battleship_view = (function () {
      */
     function drag(event) {
         var element = event.target.id;
+        for(var i = 0; i < dataUserShips.length; i++) {
+            if(element == dataUserShips[i].name) {
+                this.removeEventListener('click', drag);
+                return;
+            }
+        }
         if (element == "aircraftcarrier") {
             currentShip = this.ships[0];
         } else if (element == "battleship"){
@@ -140,12 +146,13 @@ var battleship_view = (function () {
         enableSetShip = true;
     }
 
+    /**
+     * @function mouseover
+     * @param {*} event, currentShip
+     */
     function mouseover(event, currentShip) {
         // ToDo: Chekear rotacion
-        // No funcione sobre uno ya posicionado
-        // tratar de hacerlo reutilizable
-        // que no se salga del grid
-        var target = event.target;  
+        var target = event.target;
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
         var elLetter = targetId.slice(0,1);
@@ -161,7 +168,9 @@ var battleship_view = (function () {
             }
             var nextElement = document.getElementById('tShips'+elLetter+(elNumber+i));
             elements.push(nextElement);
-        }
+        };
+        validPos(elements);
+        if(!valid) return;
         elements.forEach(function(node) {
             node.style.backgroundColor = '#000';
         });  
@@ -170,11 +179,15 @@ var battleship_view = (function () {
             'pos': []
         };
         dataShip['pos'] = elements;
-    }
 
+    }
+    
+    /**
+     * @function mouseout
+     * @param {*} event, currentShip
+     */
     function mouseout(event, currentShip) {
         // ToDo: Chekear rotacion
-        // No funcione sobre uno ya posicionado
         var target = event.target;  
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
@@ -185,6 +198,8 @@ var battleship_view = (function () {
             var nextElement = document.getElementById('tShips'+elLetter+(elNumber+i));
             elements.push(nextElement);
         }
+        validPos(elements);
+        if(!valid) return;
         elements.forEach(function(node) {
             node.style.backgroundColor = '#fff';
         });
@@ -197,6 +212,8 @@ var battleship_view = (function () {
     function showEnemyGrid() {
         document.getElementById('tShoots').classList.remove('hidden');
         document.getElementById('btnStart').classList.add('hidden');
+        //randomShips();
+        //no deberia ser clickeable hasta que se acomoden todos los barcos
     }
 
     /**
@@ -225,7 +242,7 @@ var battleship_view = (function () {
             return dataShip;
         };
         
-    } // cambiar a model
+    }
 
 
     /**
@@ -235,7 +252,127 @@ var battleship_view = (function () {
         return table;   
     }
 
-    // Drag and drop
+    /**
+     * @function saveData
+     */
+    function saveData(data) {
+        dataUserShips = data;
+    }
+
+    /**
+     * @function saveDataComputer
+     */
+    function saveDataComputer(data){
+        dataComputerShips = data;
+    }
+
+    /**
+     * @function validPos
+     */
+    function validPos(element) {
+        valid = true;
+        for (var i = 0; i < dataUserShips.length; i++) {
+            for (var j = 0; j < dataUserShips[i].pos.length; j++) {
+                for (var k = 0; k < element.length; k++) {
+                    if (dataUserShips[i].pos[j] == element[k]) {
+                        valid = false;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @function randomShips
+     * @param {*} ships, min, max
+     */
+    function randomShips(ships, min, max){
+        var usable = false;
+        ships.forEach(function(e){
+            var enemyElem = [];
+            var rowNum = Math.floor(Math.random() * (10 - e.space)) + 1;
+            var row = headers[rowNum];
+            var colNum = Math.floor(Math.random() * (10 - e.space)) + 1;           
+            for (var i = 0; e.space > i; i++) {
+                usable = false;
+                var col = colNum + i;
+                var id = 'tShoots'+ row + String(col);     
+                while(!usable) {
+                    if(usedId.length > 0) {
+                        for(var l = 0; l < usedId.length; l++) {
+                            if(usedId[l] !== id) {
+                                usable = true;
+                            } else {
+                                row = headers[Math.floor(Math.random() * (10 - e.space)) + 1]
+                                col = Math.floor(Math.random() * (10 - e.space)) + 1;
+                                id = 'tShoots'+ row + String(col+i);
+                            }      
+                        }   
+                    } else {
+                        usable = true;   
+                    }
+                }
+                enemyElem.push(id);
+                usedId.push(id);
+            };
+            fullEnemShips.push(enemyElem);
+        });
+    }
+
+    /**
+     * @function userShoots
+     */
+    function userShoots (e) {
+        //Verificar en que td se hizo click guardar en una var
+        //Compara ese td con las posiciones en el aray de enemyships 'if coincide' entonces
+        //Envia un mensaje y cambiar de color
+        //borrar ese id del array
+        //y permite un click mas
+        //cuando ese array quede en 0 gana el usuario
+        var target = e.target;
+        var id = target.id;
+        var element = document.getElementById(id);
+        for (var i = 0; i < fullEnemShips.length; i++) {
+            for (var j = 0; j < fullEnemShips[i].length; j++){
+                if(id !== fullEnemShips[i][j]) {
+                    element.classList.add('fail');
+                } else if (id == fullEnemShips[i][j]){
+                    element.classList.add('sunk');
+                    userShoootsCounter++;
+                    if (userShoootsCounter >= usedId.length){
+                        alert('Has ganado la partida');
+                    }
+                }
+            }
+        }
+        console.log(fullEnemShips);
+    }
+
+    /**
+     * @function fullEnemShips
+     */
+    function enemyShoots () {
+        //random para elegir un id 'asemeja un click'
+        //Compara ese td con las posiciones en el aray de userShips 'if coincide' entonces
+        //Envia un mensaje y cambiar de color
+        //borrar ese id del array
+        //y permite un click mas que es el id + 1 para que sea un tiro a la derecha
+        //cuando ese array quede en 0 gana el usuario
+
+        var rowNum = Math.floor(Math.random() * (10 - e.space)) + 1;
+        row = headers[rowNum];
+        var col = Math.floor(Math.random() * (10 - e.space)) + 1;
+        var id = 'tShoots'+ row + String(col);
+        if(dataUserShips.find(id)) { //arreglar
+            getElementById(id).style.backgroundColor = 'red';
+            var index = dataUserShips.indexOf(id);
+            dataUserShips.splice(index);
+            enemyShoots();
+        } else {
+            alert('Tiro fallido')
+        }
+    }
+
     return {
         renderShip: renderShip,
         renderGrid: renderGrid,
@@ -243,6 +380,12 @@ var battleship_view = (function () {
         showEnemyGrid: showEnemyGrid,
         drag: drag,
         userShips: userShips,
-        getTable: getTable
+        getTable: getTable,
+        saveData: saveData,
+        isValid: function(){
+            return valid;
+        },
+        randomShips: randomShips,
+        userShoots: userShoots,
     }
 }());
