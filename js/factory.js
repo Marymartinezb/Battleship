@@ -1,5 +1,9 @@
-//Ships Factory
-
+/**
+ * @function Factory
+ * @description
+ * This is the factory for all the ships needed on the game
+ * This is the stogare data for our game
+ */
 function Factory(){
     this.createShips = function(type) {
         var ship;
@@ -19,6 +23,12 @@ function Factory(){
         return ship;
     }
 };
+
+/**
+ * @Objects 
+ * @description
+ * All the ships have deferent porperties to be used by game
+ */
 
 var aircraftcarrier = function(){
     this.space = 5;

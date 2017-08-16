@@ -1,7 +1,12 @@
-// View Module pattern
+/**
+ * @function battleship_view
+ * @description
+ * This is the module pattern to set all the functionatity on the View for MVC pattern
+ * It renders all the funcionality on the screen
+ */
 var battleship_view = (function () {
-    var currentShip = {}; //Barco actualmente seleccionado
-    var table = {}; //Toda la tabla
+    var currentShip = {}; // Current ship
+    var table = {}; // Complete table
     var enableSetShip = false;
     this.ships; // Constructor
     var dataShip = {};
@@ -9,14 +14,17 @@ var battleship_view = (function () {
     var valid = true;
     var headers = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     var dataComputerShips = [];
-    var fullEnemShips = []; //Array de barcos del enemigo
-    var usedId = []; //Ids usados por la maquina
+    var fullEnemShips = []; // Enemy ships array
+    var usedId = []; // Ids used by the machine
     var userShoootsCounter = 0;
+    var enemyShootsCounter = 0;
 
 
     /**
      * @function renderShip
      * @param {array} ships
+     * @description
+     * This function creates the images necesaries to drag to the grid
      */
     function renderShip(ships) {
         ships.forEach(function (element) {
@@ -32,6 +40,8 @@ var battleship_view = (function () {
 
     /**
      * @function gridSingleton
+     * @description
+     * Used to compose the grids enemy an user grid, gives to the td's the listener of click
      */
     var renderGrid = (function () {
 
@@ -102,8 +112,6 @@ var battleship_view = (function () {
         }
         
         return {
-            // Get the Singleton instance if one exists
-            // or create one if it doesn't
             getInstance: function () {
                 if (!instance) {
                     instance = init();
@@ -115,6 +123,8 @@ var battleship_view = (function () {
 
     /**
      * @function startMsg
+     * @description
+     * Render initial msn
      */
     function startMsg() {
         alert('Por favor posicione sus barcos')
@@ -123,6 +133,9 @@ var battleship_view = (function () {
     /**
      * @function drag
      * @param {*} event 
+     * @description
+     * Takes the target of the click element, depending on the clicked element
+     * takes the properties that it has, to use in @function mouseover and mouseout
      */
     function drag(event) {
         var element = event.target.id;
@@ -149,9 +162,11 @@ var battleship_view = (function () {
     /**
      * @function mouseover
      * @param {*} event, currentShip
+     * @description
+     * Mouse over acept the target of the td clicked, and gives the number of spaces to give then
+     * the color by position, to simulate that is a ship there
      */
     function mouseover(event, currentShip) {
-        // ToDo: Chekear rotacion
         var target = event.target;
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
@@ -159,12 +174,10 @@ var battleship_view = (function () {
         var elNumber = parseInt(targetId.slice(1,3));         
         for (var i = 1; currentShip.space > i; i++) {
             if(elNumber+i > 10) {
-                // Este if valida que no se haya pasado de 10, el maximo del juego
-                // Si fuese el caso de que lo hizo, borra del objeto de barcos las posiciones dadas
                 dataShip = {
                     'pos': []
                 };
-                return; //Detiene la funcion
+                return;
             }
             var nextElement = document.getElementById('tShips'+elLetter+(elNumber+i));
             elements.push(nextElement);
@@ -185,9 +198,11 @@ var battleship_view = (function () {
     /**
      * @function mouseout
      * @param {*} event, currentShip
+     * @description
+     * Mouse out acept the target of the td clicked, when you are out of a td returns the
+     * initial color to simulate that is not a ship there
      */
     function mouseout(event, currentShip) {
-        // ToDo: Chekear rotacion
         var target = event.target;  
         var elements = [target];
         var targetId = target.id.replace('tShips', '');
@@ -208,16 +223,18 @@ var battleship_view = (function () {
 
     /**
      * @function showEnemyGrid
+     * @description
+     * Shows and hidde the enemy gid
      */
     function showEnemyGrid() {
         document.getElementById('tShoots').classList.remove('hidden');
         document.getElementById('btnStart').classList.add('hidden');
-        //randomShips();
-        //no deberia ser clickeable hasta que se acomoden todos los barcos
     }
 
     /**
      * @function userShips
+     * @description
+     * Clean data to insert every position ship
      */
     function userShips() {
         if (!enableSetShip) {
@@ -226,10 +243,6 @@ var battleship_view = (function () {
             enableSetShip = false;
             var pos = dataShip['pos'];
             if(pos.length == 0) {
-                // Si el objeto de barcos de posiciones fue borrado
-                // pos.length seria igual a 0, por ende no deberia dejar 
-                // insertar ningun barco ademas deberia de avisa de cierta 
-                // por que lo que hace no es valido
                 alert('Hey');
                 return;
             }
@@ -247,6 +260,8 @@ var battleship_view = (function () {
 
     /**
      * @function getTable
+     * @description
+     * Return the table
      */    
     function getTable() {
         return table;   
@@ -254,6 +269,9 @@ var battleship_view = (function () {
 
     /**
      * @function saveData
+     * @param {*} data
+     * @description
+     * Save the ships in the data user ship for view
      */
     function saveData(data) {
         dataUserShips = data;
@@ -261,6 +279,9 @@ var battleship_view = (function () {
 
     /**
      * @function saveDataComputer
+     * @param {*} data
+     * @description
+     * Save the ships in the data computer ship for view
      */
     function saveDataComputer(data){
         dataComputerShips = data;
@@ -268,6 +289,9 @@ var battleship_view = (function () {
 
     /**
      * @function validPos
+     * @param {*} element
+     * @description
+     * Takes the element and valid if is in the user ships array
      */
     function validPos(element) {
         valid = true;
@@ -285,6 +309,12 @@ var battleship_view = (function () {
     /**
      * @function randomShips
      * @param {*} ships, min, max
+     * @description
+     * Create a number and letter random to compose a new id, validate if this id is in
+     * the enemys ships array
+     * Use a while to confirm if the id is in the usable id's, so discard the
+     * repit id and set a new one
+     * save the id in fullEnemShips
      */
     function randomShips(ships, min, max){
         var usable = false;
@@ -316,19 +346,18 @@ var battleship_view = (function () {
                 usedId.push(id);
             };
             fullEnemShips.push(enemyElem);
+
         });
     }
 
     /**
      * @function userShoots
+     * @param {*} e
+     * @description
+     * Confirm the usuary cliked td to validate if is inside of the enemy ships array
+     * if match with one position in the ships sunk the ships
      */
     function userShoots (e) {
-        //Verificar en que td se hizo click guardar en una var
-        //Compara ese td con las posiciones en el aray de enemyships 'if coincide' entonces
-        //Envia un mensaje y cambiar de color
-        //borrar ese id del array
-        //y permite un click mas
-        //cuando ese array quede en 0 gana el usuario
         var target = e.target;
         var id = target.id;
         var element = document.getElementById(id);
@@ -351,25 +380,24 @@ var battleship_view = (function () {
     /**
      * @function fullEnemShips
      */
-    function enemyShoots () {
-        //random para elegir un id 'asemeja un click'
-        //Compara ese td con las posiciones en el aray de userShips 'if coincide' entonces
-        //Envia un mensaje y cambiar de color
-        //borrar ese id del array
-        //y permite un click mas que es el id + 1 para que sea un tiro a la derecha
-        //cuando ese array quede en 0 gana el usuario
-
-        var rowNum = Math.floor(Math.random() * (10 - e.space)) + 1;
+    function enemyShoots (ships) {
+        var rowNum = Math.floor(Math.random() * (10 - ships.space)) + 1;
         row = headers[rowNum];
-        var col = Math.floor(Math.random() * (10 - e.space)) + 1;
-        var id = 'tShoots'+ row + String(col);
-        if(dataUserShips.find(id)) { //arreglar
-            getElementById(id).style.backgroundColor = 'red';
-            var index = dataUserShips.indexOf(id);
-            dataUserShips.splice(index);
-            enemyShoots();
-        } else {
-            alert('Tiro fallido')
+        var col = Math.floor(Math.random() * (10 - ships.space)) + 1;
+        var id = 'tShips'+ row + String(col);
+         for (var i = 0; i < dataUserShips.length; i++) {
+            for (var j = 0; j < dataUserShips[i].length; j++){
+                if(id !== 'tShipsa1') {
+                    element.classList.add('fail');
+                } else if (id == 'tShipsa1'){
+                    element.classList.add('sunk');
+                    enemyShootsCounter++;
+                    if (enemyShootsCounter >= usedId.length){
+                        alert('Has perdido');
+                    }
+                }
+            }
+            console.log(ships);
         }
     }
 
@@ -387,5 +415,6 @@ var battleship_view = (function () {
         },
         randomShips: randomShips,
         userShoots: userShoots,
+        enemyShoots: enemyShoots,
     }
 }());
